@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{% if let Some(t) = current_tag %}{{ t.name }} - {% endif %}Feed - Nestor Wheelock{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-lg-3 d-none d-lg-block">
+        {% include "partials/sidebar.html" %}
+    </div>
+
+    <!-- Main feed -->
+    <div class="col-lg-9">
+        {% if let Some(tag) = current_tag %}
+        <div class="mb-4">
+            <h4>
+                <a href="/" class="text-decoration-none">←</a>
+                {{ tag.name }}
+            </h4>
+            {% if let Some(desc) = tag.description %}
+            <p class="text-muted-custom">{{ desc }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div id="feed">
+            {% include "partials/feed_items.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

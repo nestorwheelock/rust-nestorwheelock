@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% if !query.is_empty() %}: {{ query }}{% endif %} - Nestor Wheelock{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-lg-3 d-none d-lg-block">
+        {% include "partials/sidebar.html" %}
+    </div>
+
+    <!-- Search results -->
+    <div class="col-lg-9">
+        <div class="mb-4">
+            <h4>Search Results</h4>
+            {% if !query.is_empty() %}
+            <p class="text-muted-custom">{{ posts.len() }} result{% if posts.len() != 1 %}s{% endif %} for "{{ query }}"</p>
+            {% endif %}
+        </div>
+
+        <div id="feed">
+            {% include "partials/feed_items.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

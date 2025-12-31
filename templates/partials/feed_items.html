@@ -1,0 +1,80 @@
+{% for post in posts %}
+<div class="card post-card">
+    <div class="card-body">
+        <!-- Media -->
+        {% if let Some(media) = post.featured_media %}
+        <div class="mb-3">
+            <a href="/posts/{{ post.id }}/">
+                <img src="/media/{{ media.file }}" alt="{{ media.original_filename }}"
+                     class="img-fluid rounded" style="max-height: 400px; width: 100%; object-fit: cover;">
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Content -->
+        <div class="mb-3">
+            {% if let Some(title) = post.title %}
+            <h5 class="card-title">
+                <a href="/posts/{{ post.id }}/" class="text-decoration-none text-dark">
+                    {{ title }}
+                </a>
+            </h5>
+            {% endif %}
+
+            <p class="card-text">
+                <a href="/posts/{{ post.id }}/" class="text-decoration-none text-dark">
+                    {{ post.preview() }}
+                    {% if post.body.len() > 280 %}
+                    <span class="text-primary">Read more</span>
+                    {% endif %}
+                </a>
+            </p>
+        </div>
+
+        <!-- Tags -->
+        {% if !post.tags.is_empty() %}
+        <div class="mb-3">
+            {% for tag in post.tags %}
+            <a href="/tags/{{ tag.slug }}/" class="tag-chip">{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Meta -->
+        <div class="d-flex justify-content-between align-items-center text-muted-custom small">
+            <div>
+                {% if let Some(loc) = post.location %}
+                <span>📍 {{ loc }}</span>
+                {% endif %}
+            </div>
+            <div>
+                {% if show_dates %}
+                <span>{{ post.created_at.format("%b %e, %Y") }}</span>
+                {% endif %}
+                {% if post.source_platform != "NATIVE" %}
+                <span class="badge bg-light text-dark ms-2">{{ post.source_platform }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% if posts.is_empty() %}
+<div class="text-center py-5 text-muted-custom">
+    <h4>No posts yet</h4>
+    <p>Check back later for new content.</p>
+</div>
+{% endif %}
+
+<!-- Infinite scroll trigger -->
+{% if has_next_page %}
+<div hx-get="/htmx/feed/?page={{ next_page }}{% if let Some(t) = current_tag %}&tag={{ t.slug }}{% endif %}"
+     hx-trigger="revealed"
+     hx-swap="outerHTML"
+     class="text-center py-4">
+    <div class="spinner-border text-primary htmx-indicator" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+{% endif %}

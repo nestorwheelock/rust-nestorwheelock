@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{% if let Some(t) = post.title %}{{ t }}{% else %}{{ post.preview() }}{% endif %} - Nestor Wheelock{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Back link -->
+        <div class="mb-3">
+            <a href="/" class="text-decoration-none">← Back to Feed</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <!-- Media gallery -->
+                {% if !media.is_empty() %}
+                <div class="mb-4">
+                    {% if let Some(first) = media.first() %}
+                    <img src="/media/{{ first.file }}" alt="{{ first.original_filename }}"
+                         class="img-fluid rounded w-100"
+                         style="max-height: 600px; object-fit: contain;">
+                    {% endif %}
+
+                    {% if media.len() > 1 %}
+                    <div class="d-flex gap-2 mt-3 overflow-auto pb-2">
+                        {% for m in media %}
+                        <img src="/media/{{ m.file }}" alt="{{ m.original_filename }}"
+                             class="rounded"
+                             style="width: 80px; height: 80px; object-fit: cover;">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Metadata -->
+                <div class="mb-3 text-muted-custom small">
+                    {% if show_dates %}
+                    <span class="me-3">📅 {{ post.created_at.format("%B %e, %Y") }}</span>
+                    {% endif %}
+                    {% if let Some(loc) = post.location %}
+                    <span class="me-3">📍 {{ loc }}</span>
+                    {% endif %}
+                    {% if post.source_platform != "NATIVE" %}
+                    <span class="badge bg-light text-dark">{{ post.source_platform }}</span>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <!-- Title -->
+                {% if let Some(title) = post.title %}
+                <h2 class="mb-3">{{ title }}</h2>
+                {% endif %}
+
+                <!-- Body -->
+                <div class="post-body mb-4" style="white-space: pre-wrap;">{{ post.body }}</div>
+
+                <!-- Tags -->
+                {% if !tags.is_empty() %}
+                <div class="mb-4">
+                    {% for tag in tags %}
+                    <a href="/tags/{{ tag.slug }}/" class="tag-chip">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Category -->
+                {% if let Some(cat) = category %}
+                <div class="mb-4">
+                    <span class="text-muted">Category:</span>
+                    <a href="/category/{{ cat.slug }}/" class="text-decoration-none">{{ cat.name }}</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
